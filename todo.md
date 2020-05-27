@@ -18,5 +18,6 @@
    - text
 2. Deleting
 3. Retweeting
+4. Liking
 
 -------- Following / Followers --------
