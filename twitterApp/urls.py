@@ -19,6 +19,7 @@ from tweets.views import create_tweet, get_home_page
 
 urlpatterns = [
     path('', get_home_page),
+    path('admin/', admin.site.urls),
     path('tweets/', include('tweets.urls')),
-    path('create-tweet/', create_tweet)
+    path('create-tweet/', create_tweet),
 ]

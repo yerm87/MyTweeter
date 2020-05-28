@@ -2,19 +2,38 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404, JsonResponse
 from tweets.models import Tweet
 from tweets.forms import TweetForm
+from twitterApp import settings
+from tweets.serializers import TweetSerializer
 
 # Create your views here.
 
 def get_home_page(request):
     return render(request, 'tweets/pages/home.html')
 
+"""
+def create_tweet(request):
+    if request.method == 'POST':
+        user = request.user
+        serializer = TweetSerializer(data=request.POST)
+
+        if serializer.is_valid():
+            serializer.save(user=user)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse({}, status=400)
+"""
+
 def create_tweet(request):
     form = TweetForm()
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            if request.is_ajax():
+                return JsonResponse({}, status=401)
+            return redirect(settings.LOGIN_URL)
         form = TweetForm(request.POST)
         if form.is_valid():
             nextUrl = request.POST['next']
             tweet = form.save(commit=False)
+            tweet.user = request.user
             tweet.save()
             if request.is_ajax():
                 return JsonResponse(tweet.serialize(), status=201)
@@ -36,7 +55,7 @@ def get_tweet_list(request):
 
     return JsonResponse({'data': list_tweets})
 
-
+"""
 def get_tweet_data(request, tweetId):
     obj = {
         'id': tweetId
@@ -49,3 +68,24 @@ def get_tweet_data(request, tweetId):
         obj['message'] = 'Not Found',
         status = 404
     return JsonResponse(obj, status=status)
+"""
+
+def delete_tweet(request, tweetId):
+    if request.user.is_authenticated:
+        tweet = Tweet.objects.get(id=tweetId)
+        tweet.delete()
+    return JsonResponse({})
+
+def tweet_like(request, tweetId):
+    tweet = Tweet.objects.get(id=tweetId)
+    user = request.user
+    action = request.GET['action']
+
+    if user.is_authenticated:
+        if action == 'like':
+            if user in tweet.likes.all():
+                tweet.likes.remove(user)
+            else:
+                tweet.likes.add(user)
+        elif action == 'retweet':
+            pass

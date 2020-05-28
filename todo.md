@@ -13,11 +13,12 @@
    
 --------- Tweet ------------
 
-1. Creating
+1. Permission
+2. Creating
    - image
    - text
-2. Deleting
-3. Retweeting
-4. Liking
+3. Deleting
+4. Retweeting
+5. Liking
 
 -------- Following / Followers --------

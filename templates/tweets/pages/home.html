@@ -124,6 +124,10 @@
                         alert('Error is occurred. Please try again')
                     }
                 }
+                if(xhr.status === 401){
+                    alert('You need to log-in');
+                    window.location.href = '/login';
+                }
             }
             xhr.onerror = () => {
                 alert('no network connection')
