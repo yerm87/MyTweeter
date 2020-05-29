@@ -53,7 +53,7 @@ def get_tweet_list(request):
     tweets = Tweet.objects.all()
     list_tweets = [tweet.serialize() for tweet in tweets]
 
-    return JsonResponse({'data': list_tweets})
+    return JsonResponse({'data': list_tweets}, status=200)
 
 """
 def get_tweet_data(request, tweetId):
@@ -74,9 +74,9 @@ def delete_tweet(request, tweetId):
     if request.user.is_authenticated:
         tweet = Tweet.objects.get(id=tweetId)
         tweet.delete()
-    return JsonResponse({})
+    return JsonResponse({'msg': 'deleted'})
 
-def tweet_like(request, tweetId):
+def tweet_actions(request, tweetId):
     tweet = Tweet.objects.get(id=tweetId)
     user = request.user
     action = request.GET['action']
@@ -87,5 +87,9 @@ def tweet_like(request, tweetId):
                 tweet.likes.remove(user)
             else:
                 tweet.likes.add(user)
+            count = tweet.likes.count()
+            return JsonResponse({'likes': count}, status=200)
         elif action == 'retweet':
-            pass
+            newTweet = Tweet.objects.create(user=user, parent=tweet, content=tweet.content)
+            return JsonResponse(newTweet.serialize(), status=201)
+    return JsonResponse({}, status=200)

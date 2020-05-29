@@ -29,21 +29,59 @@
     <script>
         const tweets = document.querySelector('#tweets');
 
-        const handleLikeBtn = (tweet_id, likes_count) => {
-            console.log(tweet_id);
-            console.log(likes_count);
+        const handleLikeBtn = (tweet_id) => {
+            const url = `tweets/${tweet_id}?action=like`;
+            const method = 'GET';
+
+            const xhr = new XMLHttpRequest()
+            xhr.open(method, url);
+            xhr.responseType = 'json';
+            xhr.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = () => {
+                const likeButton = document.querySelector('#like-button');
+                const count = xhr.response.likes;
+                likeButton.textContent = `${count} Likes`;
+            }
+            xhr.send()
         }
 
         const LikeBtn = (tweet_id, likes_count) => {
-            return `<button class="btn btn-primary"
-                    onClick="handleLikeBtn(${tweet_id}, ${likes_count})">${likes_count} Likes</button>`
+            return `<button class="btn btn-primary" id="like-button"
+                    onclick="handleLikeBtn(${tweet_id}, ${likes_count})">${likes_count} Likes</button>`
+        }
+
+        const RetweetBtn = (tweet_id) => {
+            return `<button class="btn btn-outline-success"
+                            onclick="retweetBtnHandler(${tweet_id})">Retweet</button>`
         }
 
         const formatTweet = tweet => {
             const item = `<div class="col-12 col-md-10 mx-auto border rounded py-3 mb-4 tweet" id="tweet-${tweet.id}"><h1>${tweet.id}</h1>
                             <p>${tweet.content}</p>
-                            <div class="group-btn">${LikeBtn(tweet.id, tweet.likes)}</div></div>`;
+                            <div class="group-btn">${LikeBtn(tweet.id, tweet.likes)}
+                            ${RetweetBtn(tweet.id)}</div></div>`;
             return item;
+        }
+
+        const retweetBtnHandler = (tweet_id) => {
+            const url = `/tweets/${tweet_id}?action=retweet`
+            const method = 'GET'
+
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = 'json';
+            xhr.open(method, url);
+            xhr.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = () => {
+                const content = tweets.innerHTML;
+                const newTweet = xhr.response;
+                const newHtmlElement = formatTweet(newTweet);
+                tweets.innerHTML = newHtmlElement + content;
+            }
+            xhr.send();
         }
 
         const loadTweets = (tweetsWrapper) => {
@@ -80,7 +118,7 @@
                 errorBlock.setAttribute('class', 'd-block alert alert-danger');
                 errorBlock.textContent = msg;
             } else {
-                errorBlock.setAttribute('class', 'd-none alert alert danger');
+                errorBlock.setAttribute('class', 'd-none alert alert-danger');
             }
         }
 

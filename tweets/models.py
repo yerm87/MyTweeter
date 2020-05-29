@@ -14,6 +14,7 @@ class Tweet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField(User, related_name='tweet_user', through=TweetLike)
     timestamp = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['-id']
