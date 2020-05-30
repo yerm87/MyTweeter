@@ -25,7 +25,13 @@ SECRET_KEY = 't67k^o!)6km5*0+muwk8pvplg2)&^+haa_2g4-!2-4e$%*rt*!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8080"
+]
 
 
 # Application definition
@@ -40,10 +46,12 @@ INSTALLED_APPS = [
     #my apps
     'tweets',
     #3rd party packages
-    'rest_framework'
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
