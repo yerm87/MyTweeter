@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { TweetList } from './tweets/components';
+import { TweetsComponent } from './tweets/components';
 
 const App = () => {
     return (
         <div className="container">
-            <TweetList />
+            <TweetsComponent />
         </div>
     )
 }
