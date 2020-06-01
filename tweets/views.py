@@ -80,6 +80,11 @@ def tweet_actions(request, tweetId):
     tweet = Tweet.objects.get(id=tweetId)
     user = request.user
     action = request.GET['action']
+    likes = tweet.likes.all()
+    users = []
+    for like in likes:
+        users.append(like)
+    print(users)
 
     if user.is_authenticated:
         if action == 'like':
@@ -91,5 +96,7 @@ def tweet_actions(request, tweetId):
             return JsonResponse({'likes': count}, status=200)
         elif action == 'retweet':
             newTweet = Tweet.objects.create(user=user, parent=tweet, content=tweet.content)
+            for user in users:
+                newTweet.likes.add(user)
             return JsonResponse(newTweet.serialize(), status=201)
     return JsonResponse({}, status=200)

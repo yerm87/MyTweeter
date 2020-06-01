@@ -29,9 +29,10 @@ const lookup = (endpoint, usedMethod, callback, data) => {
     xhr.open(method, url);
     var csrftoken = getCookie('csrftoken');
 
+    xhr.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
     if(usedMethod === 'POST'){
-        xhr.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.setRequestHeader("X-CSRFToken", csrftoken)
     }
     xhr.onload = () => {
@@ -54,4 +55,20 @@ export const createTweet = (callback, value) => {
     formData.append('next', '/')
     formData.append('content', value)
     lookup('/create-tweet/', 'POST', callback, formData);
+}
+
+export const likeAndRetweetHandler = (tweetId, action, callback) => {
+    const url = `tweets/${tweetId}?action=${action}`;
+    const method = 'GET';
+
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url);
+    xhr.responseType = 'json';
+    xhr.setRequestHeader('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = () => {
+        callback(xhr.response, xhr.status);
+    }
+    xhr.send()
 }

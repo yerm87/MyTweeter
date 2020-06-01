@@ -20,8 +20,13 @@ class Tweet(models.Model):
         ordering = ['-id']
 
     def serialize(self):
+        if self.parent == None:
+            parentTweet = None
+        else :
+            parentTweet = self.parent.id
         return {
             'id': self.id,
             'content': self.content,
-            'likes': self.likes.count()
+            'likes': self.likes.count(),
+            'parent': parentTweet
         }

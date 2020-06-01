@@ -1,26 +1,26 @@
 import React, {useEffect, useState, useRef} from "react";
-import { loadTweets, createTweet } from './loadTweets';
+import { loadTweets, createTweet, likeAndRetweetHandler } from './loadTweets';
 
 export const LikeBtn = props => {
-    const {tweet} = props
-    const [like, setLike] = useState(0);
-    const [likeActive, setLikeActive] = useState(false);
-    const likesCount = tweet.likes
+    const [like, setLike] = useState(props.tweet.likes)
+    const setLikeOnClick = (response, status) => {
+        if(status === 200){
+            setLike(response.likes)
+            props.tweet.likes = response.likes;
+            console.log(props.tweet)
+        }
+    }
 
-    const handleClick = event => {
+    const handleLikeButton = (event, tweetId) => {
         event.preventDefault();
 
-        if(likeActive){
-            setLike(0)
-        } else {
-            setLike(1)
-        }
-        setLikeActive(!likeActive);
+        likeAndRetweetHandler(tweetId, 'like', setLikeOnClick);
+
     }
 
     return (
         <button className="btn btn-primary" id="like-button"
-                onClick={(event) => handleClick(event)}>
+                onClick={(event) => handleLikeButton(event, props.tweet.id)}>
                     {like} Likes</button>
     )
 }
@@ -28,20 +28,57 @@ export const LikeBtn = props => {
 export const RetweetBtn = props => {
     const {tweet} = props
 
+    const setRetweetOnClick = (response, status) => {
+        if(status === 201){
+            const newTweet = response;
+            const newTweets = [newTweet, ...props.allTweets]
+            props.setTweets(newTweets);
+            console.log(newTweets);
+        }
+    }
+
+    const handleRetweetButton = (event, tweetId, tweets) => {
+        event.preventDefault();
+        likeAndRetweetHandler(tweetId, 'retweet', setRetweetOnClick)
+    }
+
     return (
-        <button className="btn btn-outline-success">Retweet</button>
+        <button className="btn btn-outline-success"
+                onClick={(event) => handleRetweetButton(event, tweet.id)}>Retweet</button>
     )
 }
 
 export const Tweet = props => {
-    const {tweet} = props
-    return (
+    const {tweet, tweets, setLikes} = props;
+    let tweetElement = (
         <div className="col-12 col-md-8 mx-auto border my-3 py-3 rounded">
             <p>{tweet.content}</p>
             <LikeBtn tweet={tweet} />
-            <RetweetBtn tweet={tweet} />
+            <RetweetBtn tweet={tweet}
+                        allTweets={props.allTweets}
+                        setTweets={props.setTweets}/>
         </div>
     )
+    const tweetParent = tweet.parent !== null ? tweet.parent : null;
+    if(tweetParent){
+        const tweetParentData = props.allTweets.find(element => element.id === tweetParent)
+        tweetElement = (
+            <div className="col-12 col-md-8 mx-auto border my-3 py-3 rounded">
+                <p>{tweetParentData.content}</p>
+                <div className="row">
+                    <div className="col-12 col-md-8 mx-auto border my-3 py-3 rounded">
+                        <p>{tweet.content}</p>
+                        <LikeBtn tweet={props.tweet} />
+                        <RetweetBtn tweet={tweet}
+                                    allTweets={props.allTweets}
+                                    setTweets={props.setTweets}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    return tweetElement
 }
 
 export const TweetList = props => {
@@ -69,8 +106,11 @@ export const TweetList = props => {
 
     const tweetItems = tweets.map((tweet, index) => {
         return (
-            <Tweet tweet={tweet} key={`${index} - ${tweet.id}`} />
-        )
+            <Tweet key={`${index} - ${tweet.id}`}
+                   tweet={tweet}
+                   allTweets={tweets}
+                   setTweets={setTweets} />
+                   )
     })
 
     return (
@@ -103,7 +143,7 @@ export const TweetsComponent = () => {
     }
 
     return (
-        <div className="row">
+        <div>
             <form className="form col-10 col-md-8 mt-3 mx-auto"
                   onSubmit={(event) => handleFormSubmit(event)}>
                 <div className="alert alert-danger d-none"></div>
