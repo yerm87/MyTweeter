@@ -98,4 +98,4 @@ def tweet_actions(request, tweetId):
             for user in users:
                 newTweet.likes.add(user)
             return JsonResponse(newTweet.serialize(), status=201)
-    return JsonResponse({}, status=200)
+    return JsonResponse({}, status=401)

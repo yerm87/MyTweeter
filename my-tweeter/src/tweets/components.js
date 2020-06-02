@@ -5,6 +5,7 @@ import { CreateTweet } from './create/create';
 
 export const TweetsComponent = props => {
     const [ newTweet, setNewTweet ] = useState(null);
+    const [error, setError] = useState(false);
     const textAreaRef = useRef(null);
 
     const handleFormSubmit = (event) => {
@@ -13,8 +14,11 @@ export const TweetsComponent = props => {
             const newTweet = response;
             if(status === 201){
                 setNewTweet(newTweet);
-            } else {
-                alert('Error occurred. Please try again');
+                setError(false);
+            } else if(status === 401){
+                window.location.href = '/login';
+            } else if(status === 400){
+                setError(true);
             }
         }
         const value = textAreaRef.current.value;
@@ -27,7 +31,8 @@ export const TweetsComponent = props => {
         <div>
             <CreateTweet permission={props.permission}
                          submitHandler={(event) => handleFormSubmit(event)}
-                         reference={textAreaRef}/>
+                         reference={textAreaRef}
+                         errorMessage={error}/>
             <TweetList newTweet={newTweet} {...props} />
         </div>
     )

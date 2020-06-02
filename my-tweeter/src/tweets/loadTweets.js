@@ -37,6 +37,7 @@ const lookup = (endpoint, usedMethod, callback, data) => {
     }
     xhr.onload = () => {
         callback(xhr.response, xhr.status)
+        console.log(xhr.response);
     }
     xhr.onerror = () => {
         const response = { msg: 'error occurred' }

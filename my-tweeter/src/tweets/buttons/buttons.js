@@ -8,7 +8,8 @@ export const LikeBtn = props => {
         if(status === 200){
             setLike(response.likes)
             props.tweet.likes = response.likes;
-            console.log(props.tweet)
+        } else if(status === 401){
+            window.location.href = '/login'
         }
     }
 
@@ -35,6 +36,8 @@ export const RetweetBtn = props => {
             const newTweets = [newTweet, ...props.allTweets]
             props.setTweets(newTweets);
             console.log(newTweets);
+        } else if(status === 401){
+            window.location.href = '/login';
         }
     }
 

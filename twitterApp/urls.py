@@ -17,11 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from tweets.views import create_tweet, get_home_page
 from django.views.generic.base import TemplateView
+from accounts.views import login_view, registration_view, logout_view
 
 urlpatterns = [
     path('', get_home_page),
     path('admin/', admin.site.urls),
     path('tweets/', include('tweets.urls')),
     path('create-tweet/', create_tweet),
-    path('react/', TemplateView.as_view(template_name='tweets/react.html'))
+    path('react/', TemplateView.as_view(template_name='tweets/react.html')),
+    path('login/', login_view),
+    path('register/', registration_view),
+    path('logout/', logout_view)
 ]

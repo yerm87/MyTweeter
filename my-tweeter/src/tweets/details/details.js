@@ -19,17 +19,17 @@ export const Tweet = props => {
         const tweetParentData = props.allTweets.find(element => element.id === tweetParent)
         tweetElement = (
             <div className="col-12 col-md-8 mx-auto border my-3 py-3 rounded">
-                <p>{tweetParentData.content}</p>
+                <p>Retweet</p>
                 <div className="row">
                     <div className="col-12 col-md-8 mx-auto border my-3 py-3 rounded">
-                        <p>{tweet.content}</p>
-                        <LikeBtn tweet={props.tweet} />
-                        <RetweetBtn tweet={tweet}
-                                    allTweets={props.allTweets}
-                                    setTweets={props.setTweets}/>
-                                    <TweetDetailsButton tweet={tweet} />
+                        <p>{tweetParentData.content}</p>
                     </div>
                 </div>
+                <LikeBtn tweet={props.tweet} />
+                <RetweetBtn tweet={tweet}
+                            allTweets={props.allTweets}
+                            setTweets={props.setTweets}/>
+                            <TweetDetailsButton tweet={tweet} />
             </div>
         )
     }

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #my apps
     'tweets',
+    'accounts',
     #3rd party packages
     'rest_framework',
     'corsheaders'
