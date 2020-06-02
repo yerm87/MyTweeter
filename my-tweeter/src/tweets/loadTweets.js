@@ -46,8 +46,12 @@ const lookup = (endpoint, usedMethod, callback, data) => {
     xhr.send(jsonData);
 }
 
-export const loadTweets = (callback) => {
-    lookup('/tweets/', 'GET', callback);
+export const loadTweets = (username, callback) => {
+    let endpoint = '/tweets/';
+    if(username){
+        endpoint = `/tweets/?username=${username}`
+    }
+    lookup(endpoint, 'GET', callback);
 }
 
 export const createTweet = (callback, value) => {
@@ -71,4 +75,9 @@ export const likeAndRetweetHandler = (tweetId, action, callback) => {
         callback(xhr.response, xhr.status);
     }
     xhr.send()
+}
+
+export const getTweet = (tweetId, callback) => {
+    const endpoint = `/tweets/tweet_data/${tweetId}`;
+    lookup(endpoint, 'GET', callback)
 }

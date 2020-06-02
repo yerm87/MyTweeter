@@ -51,24 +51,23 @@ def get_tweet_list(request):
     :return: list of tweets
     """
     tweets = Tweet.objects.all()
+    username = request.GET.get('username')
+    if username != None:
+        tweets = tweets.filter(user__username=username)
+
     list_tweets = [tweet.serialize() for tweet in tweets]
 
     return JsonResponse({'data': list_tweets}, status=200)
 
-"""
+
 def get_tweet_data(request, tweetId):
-    obj = {
-        'id': tweetId
-    }
-    try:
-        model = Tweet.objects.get(id=tweetId)
-        obj['content'] = model.content
-        status = 200
-    except:
-        obj['message'] = 'Not Found',
-        status = 404
-    return JsonResponse(obj, status=status)
-"""
+    tweet = Tweet.objects.get(id=tweetId)
+    if request.is_ajax():
+        if tweet:
+            return JsonResponse(tweet.serialize(), status=200)
+        return JsonResponse({'msg': 'tweet not found'}, status=404)
+    return render(request, 'tweets/pages/home.html')
+
 
 def delete_tweet(request, tweetId):
     if request.user.is_authenticated:
