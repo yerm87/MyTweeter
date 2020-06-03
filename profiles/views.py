@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from profiles.models import Profile
 from .forms import ProfileForm
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -46,3 +47,18 @@ def edit_profile(request):
         'title': 'Edit Profile'
     }
     return render(request, 'profiles/edit.html', context)
+
+def user_follow_view(request, username):
+    current_user = request.user
+    if current_user.is_authenticated:
+        follow_user = User.objects.get(username=username)
+        if follow_user:
+            profile = follow_user.profile
+            followers = profile.followers
+            if request.GET.get('action') == 'follow':
+                followers.add(current_user)
+            elif request.GET.get('action') == 'unfollow':
+                followers.remove(current_user)
+            return JsonResponse({'followers': followers.all().count()}, status=200)
+        return JsonResponse({'msg': 'user does not exist'}, status=404)
+    return JsonResponse({}, status=200)

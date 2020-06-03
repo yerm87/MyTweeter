@@ -51,12 +51,14 @@ def get_tweet_list(request):
     :return: list of tweets
     """
     tweets = Tweet.objects.all()
-    username = request.GET.get('username')
+    #username = request.GET.get('username')
+    user = request.user
+    username = user.username
     if username != None:
         tweets = tweets.filter(user__username=username)
 
     list_tweets = [tweet.serialize() for tweet in tweets]
-
+    print(username)
     return JsonResponse({'data': list_tweets}, status=200)
 
 

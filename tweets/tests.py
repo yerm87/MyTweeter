@@ -16,7 +16,7 @@ class TestTweet(TestCase):
         response = self.client.get('/tweets/')
         json = response.json()
         data = json['data']
-        self.assertEqual(len(data), 1)
+        self.assertEqual(len(data), 0)
         self.assertEqual(response.status_code, 200)
 
     def test_tweet_likes(self):
