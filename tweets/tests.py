@@ -55,3 +55,7 @@ class TestTweet(TestCase):
         response = self.client.get(f'/tweets/{tweetId}/delete')
         data = response.json()
         self.assertEqual(data.get('msg'), 'deleted')
+
+    def user_get_tweets(self):
+        tweets_count = self.user.tweets.count()
+        self.assertEqual(tweets_count, 1)

@@ -27,5 +27,6 @@ urlpatterns = [
     path('react/', TemplateView.as_view(template_name='tweets/react.html')),
     path('login/', login_view),
     path('register/', registration_view),
-    path('logout/', logout_view)
+    path('logout/', logout_view),
+    path('profiles/', include('profiles.urls'))
 ]

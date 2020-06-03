@@ -1,0 +1,11 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+        <h2 class="mx-auto col-6 mt-4">{{ title }}</h2>
+        <form class="form col-6 mx-auto" method="post" action="">
+            {% csrf_token %}
+            {{ form }}
+            <button class="btn btn-secondary" type="submit">
+              {% if btn_label %}{{ btn_label }}{% else %}Save{% endif %}</button>
+        </form>
+{% endblock %}
