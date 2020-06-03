@@ -50,16 +50,17 @@ def get_tweet_list(request):
 
     :return: list of tweets
     """
-    tweets = Tweet.objects.all()
     #username = request.GET.get('username')
     user = request.user
-    username = user.username
-    if username != None:
-        tweets = tweets.filter(user__username=username)
-
-    list_tweets = [tweet.serialize() for tweet in tweets]
-    print(username)
+    qs = Tweet.objects.all()
+    if user.is_authenticated:
+        profiles = user.following.all()
+        user_id_followers = [profile.user.id for profile in profiles]
+        user_id_followers.append(user.id)
+        qs = Tweet.objects.filter(user__id__in=user_id_followers)
+    list_tweets = [tweet.serialize() for tweet in qs]
     return JsonResponse({'data': list_tweets}, status=200)
+
 
 
 def get_tweet_data(request, tweetId):

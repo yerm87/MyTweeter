@@ -52,13 +52,14 @@ def user_follow_view(request, username):
     current_user = request.user
     if current_user.is_authenticated:
         follow_user = User.objects.get(username=username)
-        if follow_user:
-            profile = follow_user.profile
-            followers = profile.followers
-            if request.GET.get('action') == 'follow':
-                followers.add(current_user)
-            elif request.GET.get('action') == 'unfollow':
-                followers.remove(current_user)
-            return JsonResponse({'followers': followers.all().count()}, status=200)
-        return JsonResponse({'msg': 'user does not exist'}, status=404)
+        if current_user != follow_user:
+            if follow_user:
+                profile = follow_user.profile
+                followers = profile.followers
+                if request.GET.get('action') == 'follow':
+                    followers.add(current_user)
+                elif request.GET.get('action') == 'unfollow':
+                    followers.remove(current_user)
+                return JsonResponse({'followers': followers.all().count()}, status=200)
+            return JsonResponse({'msg': 'user does not exist'}, status=404)
     return JsonResponse({}, status=200)
