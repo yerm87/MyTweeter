@@ -3,6 +3,7 @@ from django.http import HttpResponse, Http404, JsonResponse
 from tweets.models import Tweet
 from tweets.forms import TweetForm
 from twitterApp import settings
+from django.contrib.auth.models import User
 from tweets.serializers import TweetSerializer
 
 # Create your views here.
@@ -39,14 +40,33 @@ def get_tweet_list(request):
 
     :return: list of tweets
     """
-    #username = request.GET.get('username')
-    user = request.user
-    qs = Tweet.objects.all()
-    if user.is_authenticated:
+    username = request.GET.get('username')
+
+    if username:
+        user = User.objects.get(username=username)
+        user_tweets = Tweet.objects.filter(user__username=username)
+        user_tweets = [tweet for tweet in user_tweets]
         profiles = user.following.all()
+        following_tweets = []
+        for profile in profiles:
+            user = profile.user
+            all_tweets = user.tweets.all()
+            for tweet in all_tweets:
+                following_tweets.append(tweet)
+        total_tweets = user_tweets + following_tweets
+        total_tweets = [tweet.serialize() for tweet in total_tweets]
+        return JsonResponse({'data': total_tweets}, status=200)
+
+    qs = Tweet.objects.all()
+
+    """
+    if not user.is_anonymous:
+        profiles = user.following.all()
+
         user_id_followers = [profile.user.id for profile in profiles]
         user_id_followers.append(user.id)
         qs = Tweet.objects.filter(user__id__in=user_id_followers)
+        """
     list_tweets = [tweet.serialize() for tweet in qs]
     return JsonResponse({'data': list_tweets}, status=200)
 

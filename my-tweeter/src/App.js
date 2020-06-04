@@ -9,7 +9,7 @@ const App = props => {
             <BrowserRouter>
                 <Switch>
                     <Route path="/tweets/tweet_data/:tweetid" component={TweetDetailComponent}/>
-                    <Route path="/profiles/:userId" render={() => <TweetsComponent {...props} />} />
+                    <Route path="/profiles/user/:userId" render={() => <TweetsComponent {...props} />} />
                     <Route path="/" render={() => <TweetsComponent tweetid="95" {...props} />} />
                 </Switch>
             </BrowserRouter>
