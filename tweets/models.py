@@ -24,9 +24,32 @@ class Tweet(models.Model):
             parentTweet = None
         else :
             parentTweet = self.parent.id
+
+        #user = self.user.id
+
+        profile = self.user.profile
+
+        followers_count = profile.followers.count()
+        location = profile.location
+        bio = profile.bio
+        first_name = self.user.first_name
+        last_name = self.user.last_name
+        following_count = self.user.following.count()
+        user = {
+            'id': self.user.id,
+            'username': self.user.username,
+            'location': location,
+            'bio': bio,
+            'followers_count': followers_count,
+            'first_name': first_name,
+            'last_name': last_name,
+            'following_count': following_count
+        }
+
         return {
             'id': self.id,
             'content': self.content,
             'likes': self.likes.count(),
-            'parent': parentTweet
+            'parent': parentTweet,
+            'user': user
         }

@@ -10,17 +10,6 @@ from tweets.serializers import TweetSerializer
 def get_home_page(request):
     return render(request, 'tweets/pages/home.html')
 
-"""
-def create_tweet(request):
-    if request.method == 'POST':
-        user = request.user
-        serializer = TweetSerializer(data=request.POST)
-
-        if serializer.is_valid():
-            serializer.save(user=user)
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse({}, status=400)
-"""
 
 def create_tweet(request):
     form = TweetForm()

@@ -16,6 +16,23 @@ class Profile(models.Model):
     updated = models.DateTimeField(auto_now=True)
     followers = models.ManyToManyField(User, related_name='following')
 
+    def serialize(self):
+        followers_count = self.followers.count()
+        first_name = self.user.first_name
+        last_name = self.user.last_name
+        following = self.user.following.count()
+        username = self.user.username
+        return {
+            'id': self.id,
+            'username': username,
+            'location': self.location,
+            'bio': self.bio,
+            'followers_count': followers_count,
+            'first_name': first_name,
+            'last_name': last_name,
+            'following': following
+        }
+
 
 def user_did_save(sender, instance, created, *args, **kwargs):
     if created:
