@@ -37,7 +37,6 @@ const lookup = (endpoint, usedMethod, callback, data) => {
     }
     xhr.onload = () => {
         callback(xhr.response, xhr.status)
-        console.log(xhr.response);
     }
     xhr.onerror = () => {
         const response = { msg: 'error occurred' }
@@ -47,10 +46,10 @@ const lookup = (endpoint, usedMethod, callback, data) => {
     xhr.send(jsonData);
 }
 
-export const loadTweets = (username, callback) => {
+export const loadTweets = (username, callback, homepage) => {
     let endpoint = '/tweets/';
-    if(username){
-        endpoint = `/tweets/?username=${username}`
+    if(!homepage){
+        endpoint = `/tweets/feed?username=${username}`
     }
     lookup(endpoint, 'GET', callback);
 }
@@ -81,4 +80,14 @@ export const likeAndRetweetHandler = (tweetId, action, callback) => {
 export const getTweet = (tweetId, callback) => {
     const endpoint = `/tweets/tweet_data/${tweetId}`;
     lookup(endpoint, 'GET', callback)
+}
+
+export const getProfileData = (username, callback) => {
+    const endpoint = `/profiles/info?username=${username}`;
+    lookup(endpoint, 'GET', callback);
+}
+
+export const followAction = (username, action, callback) => {
+    const endpoint = `/profiles/follow/${username}?action=${action}`;
+    lookup(endpoint, 'GET', callback);
 }

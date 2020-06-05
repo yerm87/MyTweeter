@@ -23,7 +23,7 @@ class Tweet(models.Model):
         if self.parent == None:
             parentTweet = None
         else :
-            parentTweet = self.parent.id
+            parentTweet = self.parent.serialize()
 
         #user = self.user.id
 

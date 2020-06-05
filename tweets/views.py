@@ -9,7 +9,13 @@ from tweets.serializers import TweetSerializer
 # Create your views here.
 
 def get_home_page(request):
-    return render(request, 'tweets/pages/home.html')
+    user = request.user
+    context = {}
+    if not user.is_anonymous:
+        context = {
+            'username': user.username
+        }
+    return render(request, 'tweets/pages/home.html', context)
 
 
 def create_tweet(request):
@@ -40,7 +46,18 @@ def get_tweet_list(request):
 
     :return: list of tweets
     """
+    user = request.user
+
+    if not user.is_anonymous:
+        qs = Tweet.objects.exclude(user=user)
+    else :
+        qs = Tweet.objects.all()
+    list_tweets = [tweet.serialize() for tweet in qs]
+    return JsonResponse({'data': list_tweets}, status=200)
+
+def get_tweets_for_profile(request):
     username = request.GET.get('username')
+    print(username)
 
     if username:
         user = User.objects.get(username=username)
@@ -55,22 +72,16 @@ def get_tweet_list(request):
                 following_tweets.append(tweet)
         total_tweets = user_tweets + following_tweets
         total_tweets = [tweet.serialize() for tweet in total_tweets]
-        return JsonResponse({'data': total_tweets}, status=200)
-
-    qs = Tweet.objects.all()
-
-    """
-    if not user.is_anonymous:
-        profiles = user.following.all()
-
-        user_id_followers = [profile.user.id for profile in profiles]
-        user_id_followers.append(user.id)
-        qs = Tweet.objects.filter(user__id__in=user_id_followers)
         """
-    list_tweets = [tweet.serialize() for tweet in qs]
-    return JsonResponse({'data': list_tweets}, status=200)
-
-
+        for tweet in total_tweets:
+            if tweet['parent'] != None:
+                id = tweet['parent']
+                parentTweet = Tweet.objects.get(id=id)
+                parentTweet = parentTweet.serialize()
+                total_tweets.append(parentTweet)
+                """
+        return JsonResponse({'data': total_tweets}, status=200)
+    return JsonResponse({}, status=400)
 
 def get_tweet_data(request, tweetId):
     tweet = Tweet.objects.get(id=tweetId)

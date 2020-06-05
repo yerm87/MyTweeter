@@ -11,11 +11,35 @@ def get_profile_user(request, username):
     if not qs.exists():
         raise Http404
     profile = qs.first()
+
+    user = request.user
+    show = True
+
+    follow = ''
+    if not user.is_anonymous:
+        if user in profile.followers.all():
+            follow = 'unfollow'
+        else :
+            follow = 'follow'
+    if user.is_anonymous:
+        show = False
+    elif not user.is_anonymous and user.username == username:
+        show = False
     context = {
         'username': username,
-        'profile': profile
+        'profile': profile,
+        'show': show,
+        'follow': follow
     }
     return render(request, 'profiles/base.html', context)
+
+def profile_info(request):
+    username = request.GET.get('username')
+    if username:
+        profile = Profile.objects.get(user__username=username)
+        profile = profile.serialize()
+        return JsonResponse({'profile': profile}, status=200)
+    return JsonResponse({}, status=400)
 
 def edit_profile(request):
     user = request.user

@@ -4,6 +4,7 @@ import { Tweet } from "../details/details";
 
 export const TweetList = props => {
     const [tweets, setTweets] = useState([]);
+    console.log(props)
 
     useEffect(() => {
         if(props.newTweet !== null){
@@ -21,8 +22,10 @@ export const TweetList = props => {
         }
     }
 
+    const homepage = props.homepage === 'true' ? true : false
+
     useEffect(() => {
-        loadTweets(props.username, getTweetsData);
+        loadTweets(props.username, getTweetsData, homepage);
     }, []);
 
     const tweetItems = tweets.map((tweet, index) => {
